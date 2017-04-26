@@ -1,11 +1,17 @@
 package notes.cloud.kashif.cloudnotes.checklists;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -166,6 +172,74 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
         boolean checked = args.getBoolean("checked");
 
         itemsList.get(position).setChecked(checked);
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_add_note, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id){
+
+            case R.id.action_share:
+                shareNote();
+                break;
+
+            case R.id.action_delete:
+                deleteNote();
+                break;
+
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void shareNote(){
+
+        String data = et_title.getText().toString() + "\n";
+
+        for( Checklist item : itemsList ){
+            if( !item.isChecked() )
+            data += item.getText() +", ";
+        }
+
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/*");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, data );
+        startActivity(Intent.createChooser(sharingIntent,"Share using"));
+    }
+
+    private void deleteNote(){
+
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Note?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(isNew){
+                            finish();
+                        }else {
+                            dbHelper.deleteNote(note.getId());
+                            finish();
+                        }
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
 
     }
 }

@@ -1,9 +1,11 @@
 package notes.cloud.kashif.cloudnotes.notes;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,8 +14,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-import notes.cloud.kashif.cloudnotes.helpers.DBHelper;
 import notes.cloud.kashif.cloudnotes.R;
+import notes.cloud.kashif.cloudnotes.helpers.DBHelper;
 import notes.cloud.kashif.cloudnotes.pojo.Note;
 
 /*
@@ -106,16 +108,6 @@ public class NoteActivity extends AppCompatActivity {
 
     }
 
-    private void shareNote(){
-        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-        sharingIntent.setType("text/*");
-        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT,
-                et_Title.getText() +"\n"+
-                        et_Note.getText()
-        );
-        startActivity(Intent.createChooser(sharingIntent,"Share using"));
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -134,12 +126,7 @@ public class NoteActivity extends AppCompatActivity {
                 break;
 
             case R.id.action_delete:
-                if(isNew){
-                    finish();
-                }else {
-                    dbHelper.deleteNote(note.getId());
-                    finish();
-                }
+                deleteNote();
                 break;
 
         }
@@ -147,4 +134,41 @@ public class NoteActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void shareNote(){
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+        sharingIntent.setType("text/*");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT,
+                et_Title.getText() +"\n"+
+                        et_Note.getText()
+        );
+        startActivity(Intent.createChooser(sharingIntent,"Share using"));
+    }
+
+    private void deleteNote(){
+
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Note?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(isNew){
+                            finish();
+                        }else {
+                            dbHelper.deleteNote(note.getId());
+                            finish();
+                        }
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
+
+    }
+
+
 }

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,8 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
         long id = db.insert(TABLE1, null, cv);
         db.close();
         Log.d("MyLog", note.getTitle() + " Note added");
-        Log.d("MyLog dt=", getDateTime() );
-
+        Toast.makeText(context, "Note Saved", Toast.LENGTH_SHORT).show();
         return id;
     }
 
@@ -103,7 +103,7 @@ public class DBHelper extends SQLiteOpenHelper {
         long id = db.update(TABLE1, cv, KEY_ID + " = ? ", new String[]{String.valueOf(note.getId())});
         db.close();
         Log.d("MyLog", note.getTitle() + " Note updated");
-
+        Toast.makeText(context, "Note Updated", Toast.LENGTH_SHORT).show();
         return id;
     }
 
@@ -186,6 +186,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE1, KEY_ID + "=?", new String[]{String.valueOf(id)});
 
         db.close();
+        Toast.makeText(context, "Note Deleted", Toast.LENGTH_SHORT).show();
         Log.d("MyLog", "Note deleted=" + id);
 
     }
