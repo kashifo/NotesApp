@@ -18,6 +18,14 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import notes.cloud.kashif.cloudnotes.checklists.ChecklistActivity;
+import notes.cloud.kashif.cloudnotes.helpers.DBHelper;
+import notes.cloud.kashif.cloudnotes.helpers.ItemTouchHelperClass;
+import notes.cloud.kashif.cloudnotes.helpers.SimpleDividerItemDecoration;
+import notes.cloud.kashif.cloudnotes.notes.NoteActivity;
+import notes.cloud.kashif.cloudnotes.notes.NotesListAdapter;
+import notes.cloud.kashif.cloudnotes.pojo.Note;
+
 /*
 Created by Kashif on 3/9/2017.
 Application starts here, notes loaded from db and displayed here
@@ -36,14 +44,13 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
     int justDeletedNotePosition;
     NotesListAdapter adapter;
     boolean adapterSet; //to check whether if list set already
-
+    boolean other_fabs_visible;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setTitle("");
         getSupportActionBar().setTitle(Html.fromHtml("<font color='#555555'>" + getResources().getString(R.string.app_name) + "</font>"));
 
         rl_rootLayout = (RelativeLayout) findViewById(R.id.activity_main);
@@ -107,10 +114,26 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
     }
 
 
-    public void addNote(View v) {
-        Intent intent = new Intent(this, AddNoteActivity.class);
+    public void addClick(View v) {
+        if( !other_fabs_visible ) {
+            findViewById(R.id.other_fabs).setVisibility(View.VISIBLE);
+            other_fabs_visible = true;
+        }else {
+            findViewById(R.id.other_fabs).setVisibility(View.GONE);
+            other_fabs_visible = false;
+        }
+    }
+
+    public void addNewNote(View v) {
+        Intent intent = new Intent(this, NoteActivity.class);
         startActivity(intent);
     }
+
+    public void addNewChecklist(View v) {
+        Intent intent = new Intent(this, ChecklistActivity.class);
+        startActivity(intent);
+    }
+
 
     //it's called when a notes from list is clicked
     @Override
@@ -119,20 +142,29 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
         Log.d(TAG, "adapterActionPerformed args=" + args);
 
         String action = args.getString("action");
-        Note note = (Note) args.getSerializable("note");
+        int noteId = args.getInt("noteId");
 
-        if (action.equals(RowAction.CLICK.toString())) {
+        if ( action!=null && action.equals(RowAction.CLICK.toString())) {
 
-            Intent intent = new Intent(this, AddNoteActivity.class);
-            intent.putExtra("data", true);
-            intent.putExtra("note", note);
+            int noteType = args.getInt("noteType");
+            Intent intent = new Intent(this, NoteActivity.class);
+
+            if (noteType==0) {
+                intent.putExtra("data", true);
+                intent.putExtra("noteId", noteId);
+            }else{
+                intent = new Intent(this, ChecklistActivity.class);
+                intent.putExtra("data", true);
+                intent.putExtra("noteId", noteId);
+            }
+
             startActivity(intent);
 
         } else if (action.equals(RowAction.DELETE.toString())) {
 
-            justDeletedNote = note;
+            justDeletedNote = dbHelper.getNote(noteId);
             justDeletedNotePosition = args.getInt("position");
-            dbHelper.deleteNote(note.getId());
+            dbHelper.deleteNote(noteId);
 
             notesList.remove(justDeletedNotePosition);
             adapter.notifyItemRemoved(justDeletedNotePosition);
@@ -142,13 +174,11 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
                 public void onClick(View view) {
                     dbHelper.insertNote(justDeletedNote);
                     notesList.add(justDeletedNotePosition, justDeletedNote);
-                    adapter.notifyDataSetChanged();
+                    adapter.notifyItemInserted(justDeletedNotePosition);
                 }
             }).show();
 
-
         }
-
     }
 
 

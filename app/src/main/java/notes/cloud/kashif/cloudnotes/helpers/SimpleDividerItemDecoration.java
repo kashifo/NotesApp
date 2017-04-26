@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes;
+package notes.cloud.kashif.cloudnotes.helpers;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,6 +6,9 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import notes.cloud.kashif.cloudnotes.R;
+
 /*
 Shows divider in between rows of recyclerview
  */

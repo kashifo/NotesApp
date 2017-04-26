@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes;
+package notes.cloud.kashif.cloudnotes.helpers;
 
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;

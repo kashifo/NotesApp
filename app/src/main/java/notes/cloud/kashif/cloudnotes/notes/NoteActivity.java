@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes;
+package notes.cloud.kashif.cloudnotes.notes;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,22 +12,26 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import notes.cloud.kashif.cloudnotes.helpers.DBHelper;
+import notes.cloud.kashif.cloudnotes.R;
+import notes.cloud.kashif.cloudnotes.pojo.Note;
+
 /*
 Activity to add new note or edit
  */
-public class AddNoteActivity extends AppCompatActivity {
+public class NoteActivity extends AppCompatActivity {
 
     RelativeLayout rv_rootLayout;
     FloatingActionButton fab_save;
     EditText et_Title, et_Note;
     DBHelper dbHelper;
     boolean isNew=true; //checks whether it's new note
-    Note receivedNote; //existing note data received from notes list
+    Note note; //current note
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_note);
+        setContentView(R.layout.activity_note);
 
         getSupportActionBar().setTitle("");
         getSupportActionBar().setHomeAsUpIndicator( R.drawable.ic_action_back );
@@ -42,18 +46,19 @@ public class AddNoteActivity extends AppCompatActivity {
 
         et_Title = (EditText) findViewById(R.id.etTitle);
         et_Note = (EditText) findViewById(R.id.etNote);
-
+        dbHelper = new DBHelper(this);
 
         if (getIntent().hasExtra("data")) {
 
-            receivedNote = (Note) getIntent().getSerializableExtra("note");
             isNew = false;
-            et_Title.setText(receivedNote.getTitle());
-            et_Note.setText(receivedNote.getNotes());
+            int noteId = getIntent().getExtras().getInt("noteId");
+            note = dbHelper.getNote(noteId);
+            et_Title.setText( note.getTitle() );
+            et_Note.setText( note.getNote() );
 
+        }else{
+            note = new Note();
         }
-
-        dbHelper = new DBHelper(this);
 
     }//onCreate
 
@@ -78,16 +83,15 @@ public class AddNoteActivity extends AppCompatActivity {
 
             }
 
-            Note note = new Note();
             note.setTitle(inTitle);
-            note.setNotes(inNote);
+            note.setNote(inNote);
 
-            long id = 0L;
+            long id;
 
             if(isNew){
+                note.setType(0);
                 id = dbHelper.insertNote(note);
             }else{
-                note.setId( receivedNote.getId() );
                 id = dbHelper.updateNote(note);
             }
 
@@ -133,7 +137,7 @@ public class AddNoteActivity extends AppCompatActivity {
                 if(isNew){
                     finish();
                 }else {
-                    dbHelper.deleteNote(receivedNote.getId());
+                    dbHelper.deleteNote(note.getId());
                     finish();
                 }
                 break;

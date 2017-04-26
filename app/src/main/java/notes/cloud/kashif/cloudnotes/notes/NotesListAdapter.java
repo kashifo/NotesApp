@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes;
+package notes.cloud.kashif.cloudnotes.notes;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,16 +13,23 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+
+import notes.cloud.kashif.cloudnotes.Adapter2Home;
+import notes.cloud.kashif.cloudnotes.helpers.ItemTouchHelperClass;
+import notes.cloud.kashif.cloudnotes.R;
+import notes.cloud.kashif.cloudnotes.RowAction;
+import notes.cloud.kashif.cloudnotes.pojo.Note;
+
 /*
 RecyclerView adapter for viewing notes list
  */
 public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.MyViewHolder>
         implements ItemTouchHelperClass.ItemTouchHelperAdapter {
 
-    final String TAG = getClass().getSimpleName();
-    Context context;
-    ArrayList<Note> notesList;
-    Adapter2Home adapter2Home;
+    private final String TAG = getClass().getSimpleName();
+    private Context context;
+    private ArrayList<Note> notesList;
+    private Adapter2Home adapter2Home;
 
     public NotesListAdapter(Activity context, ArrayList<Note> notesList, Adapter2Home adapter2Home) {
         this.context = context;
@@ -55,9 +62,9 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.MyVi
             Log.d("onItemRemoved", "pos=" + position +"onItemRemoved size=" + notesList.size() );
 
             Bundle args = new Bundle();
-            args.putSerializable( "note", notesList.get(position) );
-            args.putInt( "position", position );
             args.putString( "action", RowAction.DELETE.toString() );
+            args.putInt( "noteId", notesList.get(position).getId() );
+            args.putInt( "position", position );
 
             adapter2Home.adapterActionPerformed( args );
 
@@ -84,10 +91,10 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.MyVi
         return new MyViewHolder(itemView);
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public LinearLayout linearLayout;
-        public TextView tvTitle;
+        LinearLayout linearLayout;
+        TextView tvTitle;
 
         public MyViewHolder(View itemLayoutView) {
             super(itemLayoutView);
@@ -110,9 +117,10 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.MyVi
             public void onClick(View view) {
 
                 Bundle args = new Bundle();
-                args.putSerializable( "note", notesList.get(position) );
-                args.putInt( "position", position );
                 args.putString( "action", RowAction.CLICK.toString() );
+                args.putInt( "noteId", notesList.get(position).getId() );
+                args.putInt( "position", position );
+                args.putInt( "noteType", notesList.get(position).getType() );
 
                 adapter2Home.adapterActionPerformed( args );
 
@@ -121,27 +129,5 @@ public class NotesListAdapter extends RecyclerView.Adapter<NotesListAdapter.MyVi
 
     }
 
-
-    public String get12hrTime(int paramHour, int paramMinute) {
-
-        int newHour = 0;
-        String newMeridian = "";
-
-        if (paramHour == 0) {
-            newHour = 12;
-            newMeridian = "AM";
-        } else if (paramHour > 0 && paramHour < 12) {
-            newHour = paramHour;
-            newMeridian = "AM";
-        } else if (paramHour == 12) {
-            newHour = paramHour;
-            newMeridian = "PM";
-        } else if (paramHour > 12) {
-            newHour = paramHour - 12;
-            newMeridian = "PM";
-        }
-
-        return newHour + ":" + paramMinute + " " + newMeridian;
-    }
 
 }//end
