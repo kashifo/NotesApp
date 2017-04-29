@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes.helpers;
+package notes.app.notesapp.helpers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import notes.cloud.kashif.cloudnotes.pojo.Note;
+import notes.app.notesapp.pojo.Note;
 
 /**
  * Created by Kashif on 3/9/2017.

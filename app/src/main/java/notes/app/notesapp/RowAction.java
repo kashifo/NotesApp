@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes;
+package notes.app.notesapp;
 
 /**
  * Created by Kashif on 3/12/2017.

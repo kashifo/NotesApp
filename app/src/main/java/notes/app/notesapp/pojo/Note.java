@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes.pojo;
+package notes.app.notesapp.pojo;
 
 import java.io.Serializable;
 

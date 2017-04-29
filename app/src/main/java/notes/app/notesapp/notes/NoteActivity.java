@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes.notes;
+package notes.app.notesapp.notes;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,9 +14,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-import notes.cloud.kashif.cloudnotes.R;
-import notes.cloud.kashif.cloudnotes.helpers.DBHelper;
-import notes.cloud.kashif.cloudnotes.pojo.Note;
+import notes.app.notesapp.R;
+import notes.app.notesapp.helpers.DBHelper;
+import notes.app.notesapp.pojo.Note;
 
 /*
 Activity to add new note or edit

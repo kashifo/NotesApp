@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes.checklists;
+package notes.app.notesapp.checklists;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,11 +26,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import notes.cloud.kashif.cloudnotes.Adapter2Home;
-import notes.cloud.kashif.cloudnotes.helpers.DBHelper;
-import notes.cloud.kashif.cloudnotes.R;
-import notes.cloud.kashif.cloudnotes.pojo.Checklist;
-import notes.cloud.kashif.cloudnotes.pojo.Note;
+import notes.app.notesapp.Adapter2Home;
+import notes.app.notesapp.R;
+import notes.app.notesapp.helpers.DBHelper;
+import notes.app.notesapp.pojo.Checklist;
+import notes.app.notesapp.pojo.Note;
+
 
 public class ChecklistActivity extends AppCompatActivity implements Adapter2Home {
 

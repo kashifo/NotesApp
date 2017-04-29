@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes.pojo;
+package notes.app.notesapp.pojo;
 
 /**
  * Created by Kashif on 4/25/2017.

@@ -1,4 +1,4 @@
-package notes.cloud.kashif.cloudnotes.notes;
+package notes.app.notesapp.notes;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,11 +14,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import notes.cloud.kashif.cloudnotes.Adapter2Home;
-import notes.cloud.kashif.cloudnotes.helpers.ItemTouchHelperClass;
-import notes.cloud.kashif.cloudnotes.R;
-import notes.cloud.kashif.cloudnotes.RowAction;
-import notes.cloud.kashif.cloudnotes.pojo.Note;
+import notes.app.notesapp.Adapter2Home;
+import notes.app.notesapp.helpers.ItemTouchHelperClass;
+import notes.app.notesapp.R;
+import notes.app.notesapp.RowAction;
+import notes.app.notesapp.pojo.Note;
 
 /*
 RecyclerView adapter for viewing notes list
