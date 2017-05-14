@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Html;
 import android.util.Log;
@@ -43,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
     Note justDeletedNote; //for undo purpose
     int justDeletedNotePosition;
     NotesListAdapter adapter;
-    boolean adapterSet; //to check whether if list set already
     boolean other_fabs_visible;
+    SearchView.OnQueryTextListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,24 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
         rv_notesList.setHasFixedSize(true);
         rv_notesList.setLayoutManager(new LinearLayoutManager(this));
         tv_empty = (TextView) findViewById(R.id.tvEmpty);
+
+        //search listener from action bar
+        listener = new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit query=" + query);
+                searchNotes(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "onQueryTextChange query=" + newText);
+                searchNotes(newText);
+                return false;
+            }
+        };
+
         dbHelper = new DBHelper(this);
 
     }
@@ -66,7 +85,11 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
     @Override
     public void onResume() {
         super.onResume();
-        init();
+
+        clearRecycler();
+        //get notes saved in sqlite db
+        notesList.addAll(dbHelper.getNotes());
+        showNotes();
     }
 
     //clears notes list
@@ -80,32 +103,19 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
 
     }
 
-    void init() {
-
-        clearRecycler();
-        //get notes saved in sqlite db
-        notesList.addAll(dbHelper.getNotes());
+    void showNotes() {
 
         if (notesList != null && !notesList.isEmpty()) {
             Log.d(TAG, "notesList!=null");
             tv_empty.setVisibility(View.GONE);
 
-            //if first time setting list do all the initialization
-            if (!adapterSet) {
-                Log.d(TAG, "!adapterSet");
-                adapter = new NotesListAdapter(this, notesList, this);
-                rv_notesList.setAdapter(adapter);
+            adapter = new NotesListAdapter(this, notesList, this);
+            rv_notesList.setAdapter(adapter);
 
-                ItemTouchHelper.Callback callback = new ItemTouchHelperClass(adapter);
-                ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
-                itemTouchHelper.attachToRecyclerView(rv_notesList);
-            } else {
-                //all init done just notify list to update
-                Log.d(TAG, "adapterSet");
-                adapter.notifyDataSetChanged();
-            }
+            ItemTouchHelper.Callback callback = new ItemTouchHelperClass(adapter);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+            itemTouchHelper.attachToRecyclerView(rv_notesList);
 
-            adapterSet = true;
         } else {
             Log.d(TAG, "empty");
             tv_empty.setVisibility(View.VISIBLE);
@@ -113,12 +123,32 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
 
     }
 
+    void searchNotes(String query) {
+
+        try {
+
+            if (!query.equals("")) {
+                clearRecycler();
+                notesList = dbHelper.searchNotes(query);
+                showNotes();
+            } else {
+                clearRecycler();
+                //get notes saved in sqlite db
+                notesList.addAll(dbHelper.getNotes());
+                showNotes();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void addClick(View v) {
-        if( !other_fabs_visible ) {
+        if (!other_fabs_visible) {
             findViewById(R.id.other_fabs).setVisibility(View.VISIBLE);
             other_fabs_visible = true;
-        }else {
+        } else {
             findViewById(R.id.other_fabs).setVisibility(View.GONE);
             other_fabs_visible = false;
         }
@@ -144,15 +174,15 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
         String action = args.getString("action");
         int noteId = args.getInt("noteId");
 
-        if ( action!=null && action.equals(notes.app.notesapp.RowAction.CLICK.toString())) {
+        if (action != null && action.equals(notes.app.notesapp.RowAction.CLICK.toString())) {
 
             int noteType = args.getInt("noteType");
             Intent intent = new Intent(this, NoteActivity.class);
 
-            if (noteType==0) {
+            if (noteType == 0) {
                 intent.putExtra("data", true);
                 intent.putExtra("noteId", noteId);
-            }else{
+            } else {
                 intent = new Intent(this, ChecklistActivity.class);
                 intent.putExtra("data", true);
                 intent.putExtra("noteId", noteId);
@@ -185,6 +215,9 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setOnQueryTextListener(listener);
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -1,4 +1,0 @@
-<searchable xmlns:android="http://schemas.android.com/apk/res/android"
-    android:label="Search Notes"
-    android:hint="Search Notes" >
-</searchable>

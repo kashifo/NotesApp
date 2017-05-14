@@ -20,6 +20,7 @@ import notes.app.notesapp.pojo.Note;
 
 public class DBHelper extends SQLiteOpenHelper {
 
+    private static final String TAG = DBHelper.class.getSimpleName();
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "cloudnotes.db";
     private static final String TABLE1 = "table1";
@@ -84,7 +85,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         long id = db.insert(TABLE1, null, cv);
         db.close();
-        Log.d("MyLog", note.getTitle() + " Note added");
+        Log.d(TAG, note.getTitle() + " Note added");
         Toast.makeText(context, "Note Saved", Toast.LENGTH_SHORT).show();
         return id;
     }
@@ -102,7 +103,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         long id = db.update(TABLE1, cv, KEY_ID + " = ? ", new String[]{String.valueOf(note.getId())});
         db.close();
-        Log.d("MyLog", note.getTitle() + " Note updated");
+        Log.d(TAG, note.getTitle() + " Note updated");
         Toast.makeText(context, "Note Updated", Toast.LENGTH_SHORT).show();
         return id;
     }
@@ -112,9 +113,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ArrayList<Note> notesList = new ArrayList<>();
 
-        String query = "SELECT * FROM " + TABLE1;
+        String queryStatement = "SELECT " + KEY_ID +", "+ KEY_TITLE +", "+ KEY_TYPE + " from "+ TABLE1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(queryStatement, null);
         cursor.moveToFirst();
 
         if (cursor.getCount() > 0) {
@@ -124,7 +125,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 Note note = new Note();
                 note.setId(cursor.getInt(0));
                 note.setTitle(cursor.getString(1));
-                note.setType(cursor.getInt(3));
+                note.setType(cursor.getInt(2));
 
                 notesList.add(note);
                 cursor.moveToNext();
@@ -135,16 +136,16 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
 
-        Log.d("MyLog", notesList.size() + "Notes retrieved");
+        Log.d(TAG, notesList.size() + " Notes retrieved");
 
         return notesList;
     }
 
     public Note getNote(int id){
 
-        String query = "SELECT * FROM " + TABLE1 +" WHERE "+KEY_ID+" = "+id;
+        String queryStatement = "SELECT * FROM " + TABLE1 +" WHERE "+KEY_ID+" = "+id;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(queryStatement, null);
         cursor.moveToFirst();
         Note note = new Note();
 
@@ -167,11 +168,50 @@ public class DBHelper extends SQLiteOpenHelper {
         return note;
     }
 
+    public ArrayList<Note> searchNotes(String query) {
+
+        ArrayList<Note> notesList = new ArrayList<>();
+
+        String queryStatement = "SELECT " + KEY_ID +", "+ KEY_TITLE +", "+ KEY_TYPE
+                + " from "+ TABLE1 +" WHERE "
+                + KEY_TITLE +" LIKE "+ "'%" + query + "%' OR "
+                + KEY_NOTE +" LIKE "+ "'%" + query + "%'";
+
+        Log.i( TAG, "queryStatement="+queryStatement );
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(queryStatement, null);
+        cursor.moveToFirst();
+
+        if (cursor.getCount() > 0) {
+
+            while (!cursor.isAfterLast()) {
+
+                Note note = new Note();
+                note.setId(cursor.getInt(0));
+                note.setTitle(cursor.getString(1));
+                note.setType(cursor.getInt(2));
+
+                notesList.add(note);
+                cursor.moveToNext();
+            }
+
+        }
+
+        cursor.close();
+        db.close();
+
+        Log.d(TAG, notesList.size() + " Notes retrieved from search");
+
+        return notesList;
+    }
+
+
     public int getRecordsCount() {
 
-        String query = "SELECT COUNT(*) FROM " + TABLE1;
+        String queryStatement = "SELECT COUNT(*) FROM " + TABLE1;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(queryStatement, null);
         int recordSize = cursor.getCount();
         cursor.close();
         Log.i( "getRecordsCount", ""+recordSize );
@@ -187,7 +227,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.close();
         Toast.makeText(context, "Note Deleted", Toast.LENGTH_SHORT).show();
-        Log.d("MyLog", "Note deleted=" + id);
+        Log.d(TAG, "Note deleted=" + id);
 
     }
 
