@@ -48,6 +48,7 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
     boolean isNew = true;
     Note note;
     ChecklistAdapter adapter;
+    boolean save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,8 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
                 tv_empty.setVisibility(View.GONE);
             }
 
+            save = true;
+
         } else {
             Toast.makeText(this, "Item can't be empty", Toast.LENGTH_SHORT).show();
         }
@@ -111,7 +114,9 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
 
     @Override
     public void onPause(){
-        saveItems();
+        if( save ) {
+            saveItems();
+        }
         super.onPause();
     }
 
@@ -173,6 +178,7 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
         boolean checked = args.getBoolean("checked");
 
         itemsList.get(position).setChecked(checked);
+        save = true;
 
     }
 
@@ -180,7 +186,7 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_add_note, menu);
+        inflater.inflate(R.menu.menu_checklist, menu);
         return true;
     }
 
@@ -226,12 +232,16 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
+                        save = false;
+
                         if(isNew){
                             finish();
                         }else {
                             dbHelper.deleteNote(note.getId());
                             finish();
                         }
+
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
