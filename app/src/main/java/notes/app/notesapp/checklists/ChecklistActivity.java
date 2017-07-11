@@ -31,6 +31,7 @@ import notes.app.notesapp.R;
 import notes.app.notesapp.helpers.DBHelper;
 import notes.app.notesapp.pojo.Checklist;
 import notes.app.notesapp.pojo.Note;
+import notes.app.notesapp.pojo.Utils;
 
 
 public class ChecklistActivity extends AppCompatActivity implements Adapter2Home {
@@ -53,6 +54,8 @@ public class ChecklistActivity extends AppCompatActivity implements Adapter2Home
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.onActivityCreateSetTheme(this);
+
         setContentView(R.layout.activity_checklist);
 
         rl_rootLayout = (RelativeLayout) findViewById(R.id.root_activity_checklist);

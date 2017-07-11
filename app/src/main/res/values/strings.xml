@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">NotesApp</string>
+    <string name="search_notes">Search Notes</string>
+    <string name="backup_to_cloud">Backup to cloud</string>
+    <string name="settings">Settings</string>
+
+    <string-array name="theme_list_entries">
+        <item>Default</item>
+        <item>Orange</item>
+        <item>Pink</item>
+        <item>Red</item>
+        <item>Blue</item>
+        <item>Brown</item>
+        <item>Amber</item>
+        <item>Teal</item>
+
+    </string-array>
+
+    <string-array name="theme_list_entry_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+
+    </string-array>
 </resources>
