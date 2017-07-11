@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import notes.app.notesapp.R;
 import notes.app.notesapp.helpers.DBHelper;
 import notes.app.notesapp.pojo.Note;
+import notes.app.notesapp.pojo.Utils;
 
 /*
 Activity to add new note or edit
@@ -33,6 +34,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_note);
 
         getSupportActionBar().setTitle("");

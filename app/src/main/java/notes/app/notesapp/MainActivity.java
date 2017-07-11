@@ -1,7 +1,9 @@
 package notes.app.notesapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +28,7 @@ import notes.app.notesapp.helpers.SimpleDividerItemDecoration;
 import notes.app.notesapp.notes.NoteActivity;
 import notes.app.notesapp.notes.NotesListAdapter;
 import notes.app.notesapp.pojo.Note;
+import notes.app.notesapp.pojo.Utils;
 
 /*
 Created by Kashif on 3/9/2017.
@@ -38,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
     RelativeLayout rl_rootLayout;
     RecyclerView rv_notesList;
     TextView tv_empty;
-
+    SharedPreferences sharedPreferences;
+    String themeColor;
     DBHelper dbHelper;
     ArrayList<Note> notesList = new ArrayList<>();
     Note justDeletedNote; //for undo purpose
@@ -50,8 +54,11 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Utils.onActivityCreateSetTheme(this);
         setContentView(R.layout.activity_main);
-
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        themeColor = sharedPreferences.getString("theme_list_check", null);
+        //Log.d("THEME SELECED", themeColor);
         getSupportActionBar().setTitle(Html.fromHtml("<font color='#555555'>" + getResources().getString(R.string.app_name) + "</font>"));
 
         rl_rootLayout = (RelativeLayout) findViewById(R.id.activity_main);
@@ -84,8 +91,15 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
 
     @Override
     public void onResume() {
-        super.onResume();
+        SharedPreferences themePref = PreferenceManager.getDefaultSharedPreferences(this);
+        String prefList = themePref.getString("theme_list_check", null);
 
+        if (themeColor != null && prefList != null && !themeColor.equals(prefList)) {
+            Log.d("THEME Selected", prefList);
+            Utils.changeTotheme(this, Integer.parseInt(prefList));
+        }
+
+        super.onResume();
         clearRecycler();
         //get notes saved in sqlite db
         notesList.addAll(dbHelper.getNotes());
@@ -218,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchMenuItem.getActionView();
         searchView.setOnQueryTextListener(listener);
+        MenuItem themeItem = menu.findItem(R.id.settingsMenu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -228,6 +243,10 @@ public class MainActivity extends AppCompatActivity implements Adapter2Home {
         if (id == R.id.action_cloud) {
             Toast.makeText(this, "Not implemented yet", Toast.LENGTH_SHORT).show();
             return true;
+        }
+        if (id == R.id.settingsMenu) {
+            Intent settingintent = new Intent(this, Settings.class);
+            startActivity(settingintent);
         }
 
         return super.onOptionsItemSelected(item);

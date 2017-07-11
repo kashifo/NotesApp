@@ -7,7 +7,7 @@
         android:id="@+id/action_search"
         android:icon="@drawable/ic_action_search"
         android:orderInCategory="100"
-        android:title="Search Notes"
+        android:title="@string/search_notes"
         app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView"
         />
@@ -16,7 +16,10 @@
         android:id="@+id/action_cloud"
         android:icon="@drawable/ic_action_cloud_up"
         android:orderInCategory="200"
-        android:title="Backup to cloud"
+        android:title="@string/backup_to_cloud"
         app:showAsAction="ifRoom"
+        />
+    <item android:title="@string/settings"
+        android:id="@+id/settingsMenu"
         />
 </menu>
